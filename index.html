@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comment j'ai perdu 10 kg en 3 mois</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E2C97E;
+    --gold-dim: rgba(201,168,76,0.18);
+    --gold-line: rgba(201,168,76,0.35);
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --text: #f0ead6;
+    --text-muted: rgba(240,234,214,0.45);
+    --text-dim: rgba(240,234,214,0.22);
+    --card-w: 280px;
+    --card-gap: 56px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 20;
+    padding: 20px 36px 16px;
+    background: linear-gradient(to bottom, #0d0d0d 70%, transparent);
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .header-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .step-counter {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+  }
+
+  /* SCROLL TRACK */
+  .scroll-track {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    cursor: grab;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-line) transparent;
+  }
+  .scroll-track:active { cursor: grabbing; }
+  .scroll-track::-webkit-scrollbar { height: 3px; }
+  .scroll-track::-webkit-scrollbar-track { background: transparent; }
+  .scroll-track::-webkit-scrollbar-thumb { background: var(--gold-line); border-radius: 2px; }
+
+  /* INNER CANVAS */
+  .canvas {
+    display: flex;
+    align-items: flex-start;
+    padding: 110px 80px 60px;
+    width: max-content;
+    min-height: 100%;
+    position: relative;
+  }
+
+  /* CONNECTING LINE */
+  .line-track {
+    position: absolute;
+    top: 196px;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-line) 60px, var(--gold-line) calc(100% - 60px), transparent);
+    z-index: 0;
+  }
+
+  /* STEP WRAPPER */
+  .step-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    width: var(--card-w);
+    flex-shrink: 0;
+    animation: fadeUp 0.5s ease both;
+  }
+  .step-wrap + .step-wrap {
+    margin-left: var(--card-gap);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NODE DOT */
+  .node-dot {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+  }
+  .node-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  /* VERTICAL CONNECTOR */
+  .v-line {
+    width: 1px;
+    height: 20px;
+    background: var(--gold-line);
+    flex-shrink: 0;
+  }
+
+  /* CARD */
+  .card {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--gold-line);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .card:hover {
+    border-color: var(--gold);
+    background: var(--bg3);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at top center, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1.3;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .sub-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sub-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 11.5px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.45;
+    transition: color 0.15s;
+  }
+  .card:hover .sub-list li { color: rgba(240,234,214,0.65); }
+  .sub-list li::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    margin-top: 5px;
+    opacity: 0.7;
+  }
+
+  /* SPECIAL: concept tag for NEAT */
+  .concept-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--gold);
+    border: 1px solid var(--gold-line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-bottom: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* NAV ARROWS */
+  .nav-arrows {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 20;
+  }
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--gold-line);
+    background: var(--bg2);
+    color: var(--gold);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--gold); background: var(--bg3); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    bottom: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    transition: width 0.2s;
+    z-index: 30;
+  }
+
+  /* stagger delays */
+  .step-wrap:nth-child(1) { animation-delay: 0.05s; }
+  .step-wrap:nth-child(2) { animation-delay: 0.12s; }
+  .step-wrap:nth-child(3) { animation-delay: 0.19s; }
+  .step-wrap:nth-child(4) { animation-delay: 0.26s; }
+  .step-wrap:nth-child(5) { animation-delay: 0.33s; }
+  .step-wrap:nth-child(6) { animation-delay: 0.40s; }
+  .step-wrap:nth-child(7) { animation-delay: 0.47s; }
+  .step-wrap:nth-child(8) { animation-delay: 0.54s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">Comment j'ai perdu 10 kg en 3 mois</span>
+  <span class="header-sub">8 actions clés</span>
+  <span class="step-counter" id="step-counter">← Faites défiler →</span>
+</div>
+
+<div class="scroll-track" id="track">
+  <div class="canvas" id="canvas">
+    <div class="line-track"></div>
+
+    <!-- ÉTAPE 1 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">1</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Arrêter de penser uniquement au cardio</div>
+        <ul class="sub-list">
+          <li>Le cardio brûle peu de calories sur la journée</li>
+          <li>Beaucoup compensent en mangeant plus</li>
+          <li>Le cardio fatigue et réduit l'activité quotidienne</li>
+          <li>La perte de gras dépend surtout du déficit calorique total</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 2 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">2</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Augmenter le NEAT</div>
+        <div class="concept-tag">NEAT = calories brûlées hors sport</div>
+        <ul class="sub-list">
+          <li>Marcher plus au quotidien</li>
+          <li>Prendre les escaliers</li>
+          <li>Bouger plus dans la journée</li>
+          <li>Rester moins assis</li>
+          <li>Ces calories peuvent dépasser celles du sport</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 3 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">3</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Ajuster intelligemment ses calories</div>
+        <ul class="sub-list">
+          <li>Calculer ses besoins caloriques</li>
+          <li>Créer un déficit raisonnable</li>
+          <li>Éviter les déficits trop agressifs</li>
+          <li>Ajuster selon la progression</li>
+          <li>Trop manger ET trop peu peuvent bloquer</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">4</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Comprendre les macronutriments</div>
+        <ul class="sub-list">
+          <li>Protéines → préserver la masse musculaire</li>
+          <li>Lipides → indispensables aux hormones</li>
+          <li>Glucides → carburant de l'effort</li>
+          <li>Les calories seules ne suffisent pas</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 5 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">5</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Boire suffisamment d'eau</div>
+        <ul class="sub-list">
+          <li>La déshydratation augmente la sensation de faim</li>
+          <li>Le cerveau confond souvent soif et faim</li>
+          <li>Boire avant les repas réduit l'appétit</li>
+          <li>Meilleure digestion</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 6 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">6</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Prioriser l'adhérence</div>
+        <ul class="sub-list">
+          <li>Arrêter les méthodes extrêmes</li>
+          <li>Choisir une alimentation qu'on aime</li>
+          <li>Choisir un entraînement plaisant</li>
+          <li>Imparfait mais durable > parfait mais impossible</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 7 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">7</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Améliorer son sommeil</div>
+        <ul class="sub-list">
+          <li>Manque de sommeil → faim augmentée</li>
+          <li>Baisse de motivation et d'énergie</li>
+          <li>Moins de contrôle alimentaire</li>
+          <li>Récupération et régulation hormonale</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 8 -->
+    <div class="step-wrap">
+      <div class="node-dot"><span class="node-num">8</span></div>
+      <div class="v-line"></div>
+      <div class="card">
+        <div class="card-title">Changer son identité</div>
+        <ul class="sub-list">
+          <li>Arrêter de se voir comme "au régime"</li>
+          <li>Devenir quelqu'un qui prend soin de son corps</li>
+          <li>Créer des habitudes durables</li>
+          <li>Adopter un style de vie actif</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="nav-arrows">
+  <button class="nav-btn" id="prev">&#8592;</button>
+  <button class="nav-btn" id="next">&#8594;</button>
+</div>
+
+<div class="progress-bar" id="progress"></div>
+
+<script>
+  const track = document.getElementById('track');
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('step-counter');
+  const steps = document.querySelectorAll('.step-wrap');
+  const CARD_W = 280 + 56;
+
+  // Update progress + counter on scroll
+  track.addEventListener('scroll', () => {
+    const max = track.scrollWidth - track.clientWidth;
+    const ratio = max > 0 ? track.scrollLeft / max : 0;
+    progress.style.width = (ratio * 100) + '%';
+
+    // Which step is most visible
+    const idx = Math.round(track.scrollLeft / CARD_W);
+    const clamped = Math.min(idx + 1, steps.length);
+    counter.textContent = `Étape ${clamped} / ${steps.length}`;
+  });
+
+  // Nav buttons
+  document.getElementById('next').addEventListener('click', () => {
+    track.scrollBy({ left: CARD_W, behavior: 'smooth' });
+  });
+  document.getElementById('prev').addEventListener('click', () => {
+    track.scrollBy({ left: -CARD_W, behavior: 'smooth' });
+  });
+
+  // Drag to scroll
+  let isDragging = false, startX = 0, startScroll = 0;
+  track.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.pageX;
+    startScroll = track.scrollLeft;
+    track.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    track.scrollLeft = startScroll - (e.pageX - startX);
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    track.style.cursor = 'grab';
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') track.scrollBy({ left: CARD_W, behavior: 'smooth' });
+    if (e.key === 'ArrowLeft')  track.scrollBy({ left: -CARD_W, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
